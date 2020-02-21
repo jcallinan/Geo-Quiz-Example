@@ -35,8 +35,7 @@ public class QuizActivity extends AppCompatActivity {
 
 
         mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
-        int question = mQuestionBank[mCurrentIndex].getTextResId();
-        mQuestionTextView.setText(question);
+
 
         mTrueButton = (Button) findViewById(R.id.true_button);
         mFalseButton = (Button) findViewById(R.id.false_button);
@@ -45,7 +44,7 @@ public class QuizActivity extends AppCompatActivity {
         {
             @Override
             public void onClick(View v) {
-                Toast.makeText(QuizActivity.this,R.string.correct_toast,Toast.LENGTH_SHORT).show();
+                checkAnswer(true);
             }
         });
         mFalseButton.setOnClickListener(new View.OnClickListener()
@@ -53,7 +52,7 @@ public class QuizActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // does nothing yet
-                Toast.makeText(QuizActivity.this,R.string.incorrect_toast,Toast.LENGTH_SHORT).show();
+                checkAnswer(false);
             }
         });
         mNextButton = (Button) findViewById(R.id.next_button);
@@ -61,10 +60,28 @@ public class QuizActivity extends AppCompatActivity {
         {
             @Override
             public void onClick(View v) {
-                mCurrentIndex = (mCurrentIndex +1)
+                mCurrentIndex = (mCurrentIndex +1) % mQuestionBank.length;
+                updateQuestion();
             }
+
         });
+        updateQuestion();
 
+    }
+    private void updateQuestion() {
+        int question = mQuestionBank[mCurrentIndex].getTextResId();
+        mQuestionTextView.setText(question);
+    }
+    private void checkAnswer(boolean userPressedTrue) {
 
+        boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
+        int messageResId = 0;
+
+        if (userPressedTrue == answerIsTrue) {
+            messageResId = R.string.correct_toast;
+        } else {
+            messageResId = R.string.incorrect_toast;
+        }
+        Toast.makeText(QuizActivity.this,messageResId,Toast.LENGTH_SHORT).show();
     }
 }
